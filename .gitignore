@@ -1,0 +1,11 @@
+# Windows Explorer
+Thumbs.db
+Desktop.ini
+
+# Local editor settings
+.vscode/
+.idea/
+
+# Temporary exports and test images
+*.log
+*.tmp

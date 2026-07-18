@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="将图片识别为 MARD 拼豆色号，并生成色块预览和用量清单。">
+  <title>拼豆图纸生成器</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div><p class="eyebrow">本地静态工具</p><h1>拼豆图纸生成器</h1></div>
+      <p>先决定成品有多少颗，再检查识别出来的色块和色号。</p>
+    </header>
+
+    <div class="workspace">
+      <aside class="control-panel" aria-label="图纸设置">
+        <section class="control-section">
+          <h2>1. 选择图片</h2>
+          <label class="file-field">上传本地图片<input type="file" id="imgFile" accept="image/*"></label>
+          <p class="hint" id="sourceStatus">上传后默认使用整张图片。</p>
+        </section>
+
+        <section class="control-section">
+          <h2>2. 成品尺寸</h2>
+          <p class="hint">只需设定成品最长边的颗数，另一边按图片比例自动计算。</p>
+          <div class="preset-row" role="group" aria-label="长边颗数预设">
+            <button type="button" class="preset is-selected" data-size="30">30</button>
+            <button type="button" class="preset" data-size="40">40</button>
+            <button type="button" class="preset" data-size="50">50</button>
+            <button type="button" class="preset" data-size="60">60</button>
+          </div>
+          <label class="form-item">自定义长边颗数<input type="number" id="longEdge" value="30" min="10" max="120" inputmode="numeric"></label>
+          <output class="size-result" id="sizeResult">上传图片后显示成品尺寸</output>
+        </section>
+
+        <section class="control-section">
+          <h2>3. 色卡版本</h2>
+          <div class="button-row"><button type="button" id="palette221Btn" class="btn btn-primary">基础版 <span id="baseCount"></span></button><button type="button" id="palette291Btn" class="btn btn-secondary">完整版 <span id="fullCount"></span></button></div>
+        </section>
+
+        <details class="advanced-options">
+          <summary>高级选项</summary>
+          <label class="form-item">颜色合并程度<input type="range" id="colorTol" value="24" min="0" max="60" step="1"><span id="tolValue">24</span></label>
+          <p class="hint">数值越大，相近的颜色越容易归并为同一种色号。</p>
+        </details>
+
+        <div class="action-stack">
+          <button type="button" id="analyzeBtn" class="btn btn-primary" disabled>识别颜色并预览</button>
+          <button type="button" id="downloadBtn" class="btn btn-success" disabled>下载图纸 PNG</button>
+        </div>
+      </aside>
+
+      <section class="main-column">
+        <article class="preview-card">
+          <div class="card-heading"><div><p>构图</p><h2>图片取景</h2></div><span class="status-text" id="cropStatus">整图模式</span></div>
+          <div class="crop-container" id="cropContainer">
+            <p class="empty-state" id="cropEmpty">上传一张图片后，可以直接识别；只有需要改变构图时才裁剪。</p>
+            <img id="cropImage" class="crop-image" alt="上传图片预览" hidden>
+            <div id="cropBox" class="crop-box" hidden>
+              <span class="crop-handle handle-tl" data-handle="tl"></span><span class="crop-handle handle-tr" data-handle="tr"></span>
+              <span class="crop-handle handle-bl" data-handle="bl"></span><span class="crop-handle handle-br" data-handle="br"></span>
+              <span class="crop-handle handle-top" data-handle="top"></span><span class="crop-handle handle-bottom" data-handle="bottom"></span>
+              <span class="crop-handle handle-left" data-handle="left"></span><span class="crop-handle handle-right" data-handle="right"></span>
+            </div>
+          </div>
+          <div class="crop-controls">
+            <button type="button" class="btn btn-outline" id="startCropBtn" disabled>调整构图</button>
+            <button type="button" class="btn btn-primary" id="applyCropBtn" disabled>使用此裁剪</button>
+            <button type="button" class="btn btn-quiet" id="cancelCropBtn" disabled>恢复整图</button>
+            <span class="zoom-tools"><button type="button" class="zoom-btn" id="zoomOutBtn" aria-label="缩小图片">−</button><span id="zoomValue">100%</span><button type="button" class="zoom-btn" id="zoomInBtn" aria-label="放大图片">＋</button></span>
+          </div>
+        </article>
+
+        <article class="result-card">
+          <div class="card-heading"><div><p>识别预览</p><h2>拼豆色块与色号</h2></div><span class="status-text" id="resultStatus">尚未识别</span></div>
+          <div class="result-container" id="resultContainer"><p class="empty-state">设置长边颗数后，点击“识别颜色并预览”。</p></div>
+        </article>
+      </section>
+    </div>
+  </main>
+  <script src="assets/palette.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
